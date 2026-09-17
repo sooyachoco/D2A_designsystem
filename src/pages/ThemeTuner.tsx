@@ -183,10 +183,14 @@ export function ThemeTuner() {
     if (!changed) { setMessage('변경된 토큰이 없습니다'); return; }
     const block = toCssBlock(draft);
     try {
-      await navigator.clipboard.writeText(block);
+      // 포커스가 없는 탭에서는 writeText 가 영원히 pending 할 수 있어 타임아웃을 건다
+      await Promise.race([
+        navigator.clipboard.writeText(block),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500)),
+      ]);
       setMessage(`📋 CSS ${changed}줄 복사됨 — tokens.css 의 :root 에 붙여넣으세요`);
     } catch {
-      // clipboard 권한이 없으면 선택 가능한 형태로 노출
+      // clipboard 를 쓸 수 없으면 직접 선택·복사할 수 있게 원문을 노출한다
       setMessage(block);
     }
   }, [draft]);
