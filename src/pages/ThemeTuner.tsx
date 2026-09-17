@@ -15,11 +15,13 @@ const STORAGE_KEY = 'd2a-theme-tuner-draft';
 
 type Field =
   | { kind: 'color'; name: string; label: string }
-  | { kind: 'range'; name: string; label: string; min: number; max: number; step: number; unit: string };
+  | { kind: 'range'; name: string; label: string; min: number; max: number; step: number; unit: string }
+  | { kind: 'select'; name: string; label: string; options: { value: string; label: string }[] };
 
 type Group = { title: string; axis: string; fields: Field[] };
+type Tab = { id: string; label: string; hint: string; groups: Group[] };
 
-const GROUPS: Group[] = [
+const GLOBAL_GROUPS: Group[] = [
   {
     title: '톤앤매너',
     axis: 'T',
@@ -55,7 +57,69 @@ const GROUPS: Group[] = [
   },
 ];
 
-const ALL_FIELDS = GROUPS.flatMap((g) => g.fields);
+/**
+ * 콘텐츠(L3) 치수 슬롯 — 레이아웃의 "파라미터" 층.
+ * 구조(벤토 ↔ 분할 ↔ 스택)는 마크업이라 여기서 바꿀 수 없다.
+ */
+const CONTENT_GROUPS: Group[] = [
+  {
+    title: '히어로',
+    axis: 'L',
+    fields: [
+      {
+        kind: 'select', name: '--hero-aspect', label: '비율',
+        options: [
+          { value: '21/9', label: '21:9 · 시네마틱' },
+          { value: '2/1', label: '2:1' },
+          { value: '16/9', label: '16:9 · 표준' },
+          { value: '3/2', label: '3:2' },
+          { value: '4/3', label: '4:3 · 세로 여유' },
+        ],
+      },
+      { kind: 'range', name: '--hero-min-h', label: '최소 높이', min: 240, max: 640, step: 10, unit: 'px' },
+      { kind: 'range', name: '--hero-max-h', label: '최대 높이', min: 400, max: 900, step: 10, unit: 'px' },
+    ],
+  },
+  {
+    title: '그리드',
+    axis: 'L',
+    fields: [
+      { kind: 'range', name: '--grid-columns', label: '벤토 컬럼 수', min: 3, max: 8, step: 1, unit: '' },
+      { kind: 'range', name: '--grid-row-h', label: '벤토 행 높이', min: 80, max: 200, step: 4, unit: 'px' },
+      { kind: 'range', name: '--card-grid-cols', label: '카드 그리드 열 수', min: 1, max: 4, step: 1, unit: '' },
+    ],
+  },
+  {
+    title: '미디어 · 내비',
+    axis: 'L',
+    fields: [
+      {
+        kind: 'select', name: '--media-aspect', label: '썸네일 비율',
+        options: [
+          { value: '16/9', label: '16:9 · 표준' },
+          { value: '3/2', label: '3:2' },
+          { value: '4/3', label: '4:3' },
+          { value: '1/1', label: '1:1 · 정사각' },
+        ],
+      },
+      { kind: 'range', name: '--layout-sidebar-w', label: 'LNB 폭', min: 160, max: 320, step: 4, unit: 'px' },
+      { kind: 'range', name: '--layout-gnb-h', label: 'GNB 높이', min: 44, max: 96, step: 2, unit: 'px' },
+    ],
+  },
+];
+
+const TABS: Tab[] = [
+  {
+    id: 'global', label: '전역', groups: GLOBAL_GROUPS,
+    hint: '색·모양·타이포 — 화면 전체에 적용됩니다.',
+  },
+  {
+    id: 'content', label: '콘텐츠', groups: CONTENT_GROUPS,
+    hint: '레이아웃 치수 — 구조(벤토 ↔ 분할 ↔ 스택)는 마크업이라 여기서 바꿀 수 없습니다.',
+  },
+];
+
+const ALL_FIELDS = TABS.flatMap((t) => t.groups.flatMap((g) => g.fields));
 
 /** 현재 적용된 계산값을 읽는다 (인라인 오버라이드가 있으면 그 값). */
 function readComputed(name: string): string {
@@ -66,6 +130,11 @@ function readComputed(name: string): string {
 function toNumber(raw: string): number {
   const n = parseFloat(raw);
   return Number.isFinite(n) ? n : 0;
+}
+
+/** 비율 값 비교 — 브라우저가 "21/9" 를 "21 / 9" 로 돌려주기도 한다. */
+function sameRatio(a: string, b: string): boolean {
+  return a.replace(/\s+/g, '') === b.replace(/\s+/g, '');
 }
 
 type BridgeState = 'checking' | 'ready' | 'down' | 'blocked' | 'saving' | 'saved' | 'error';
@@ -91,6 +160,7 @@ export function ThemeTuner() {
     () => new URLSearchParams(window.location.search).get('tuner') === 'open',
   );
   const [draft, setDraft] = useState<Record<string, string>>({});
+  const [tabId, setTabId] = useState<string>('global');
   const [bridge, setBridge] = useState<BridgeState>('checking');
   const [message, setMessage] = useState('');
   /** 패널을 처음 연 시점의 파일 원본값 — "되돌리기" 기준선 */
@@ -196,6 +266,14 @@ export function ThemeTuner() {
   }, [draft]);
 
   const changedCount = Object.keys(draft).length;
+  const activeTab = TABS.find((t) => t.id === tabId) ?? TABS[0];
+  /** 탭별 변경 건수 — 다른 탭에 조정이 숨어 있어도 보이게 한다 */
+  const tabCounts = Object.fromEntries(
+    TABS.map((t) => [
+      t.id,
+      t.groups.flatMap((g) => g.fields).filter((f) => draft[f.name] !== undefined).length,
+    ]),
+  );
 
   const badge = {
     checking: { cls: 'neutral', text: '브리지 확인 중…' },
@@ -226,8 +304,23 @@ export function ThemeTuner() {
         <button className="tuner__close" onClick={() => setOpen(false)} aria-label="닫기">✕</button>
       </header>
 
+      <nav className="tuner__tabs" role="tablist">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            role="tab"
+            aria-selected={t.id === tabId}
+            className={`tuner__tab${t.id === tabId ? ' on' : ''}`}
+            onClick={() => setTabId(t.id)}
+          >
+            {t.label}
+            {tabCounts[t.id] > 0 && <span className="tuner__tab-n">{tabCounts[t.id]}</span>}
+          </button>
+        ))}
+      </nav>
+
       <div className="tuner__body">
-        {GROUPS.map((group) => (
+        {activeTab.groups.map((group) => (
           <section key={group.title} className="tuner__group">
             <h3 className="tuner__group-title">
               <span className="tuner__axis">{group.axis}</span>
@@ -241,7 +334,7 @@ export function ThemeTuner() {
                     {f.label}
                     <code className="tuner__var">{f.name}</code>
                   </label>
-                  {f.kind === 'color' ? (
+                  {f.kind === 'color' && (
                     <div className="tuner__control">
                       <input
                         id={f.name}
@@ -251,7 +344,8 @@ export function ThemeTuner() {
                       />
                       <span className="tuner__value">{current}</span>
                     </div>
-                  ) : (
+                  )}
+                  {f.kind === 'range' && (
                     <div className="tuner__control">
                       <input
                         id={f.name}
@@ -265,15 +359,28 @@ export function ThemeTuner() {
                       <span className="tuner__value">{current}</span>
                     </div>
                   )}
+                  {f.kind === 'select' && (
+                    <div className="tuner__control">
+                      <select
+                        id={f.name}
+                        className="tuner__select"
+                        value={f.options.find((o) => sameRatio(o.value, current))?.value ?? f.options[0].value}
+                        onChange={(e) => apply(f.name, e.target.value)}
+                      >
+                        {f.options.map((o) => (
+                          <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                      </select>
+                      <span className="tuner__value">{current}</span>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </section>
         ))}
 
-        <p className="tuner__note">
-          레이아웃(L) 축은 마크업 구조라 여기서 바꿀 수 없습니다. 벤토 ↔ 분할 같은 변경은 코드 수정이 필요합니다.
-        </p>
+        <p className="tuner__note">{activeTab.hint}</p>
       </div>
 
       <footer className="tuner__foot">

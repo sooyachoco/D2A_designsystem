@@ -105,13 +105,22 @@
   --tracking-wide:    0.05em;
   --tracking-wider:   0.12em;
 
-  /* ── 레이아웃 (L-3 Apple TV+) ───────────────────────────── */
+  /* ── 레이아웃 · 치수 슬롯 (L3 · L-3 Apple TV+) ──────────────
+     구조(벤토 ↔ 분할 ↔ 스택)는 마크업이 정하고, 치수는 여기서 정한다.
+     이름은 팀 공통 슬롯이므로 도메인 중립어를 쓴다 — 값만 프로젝트별로 바꾼다.
+     🎛 테마 조정기의 "콘텐츠" 탭이 이 값들을 실시간 조정한다. */
   --layout-content-max-w: 1440px;
-  --layout-sidebar-w:     220px;
+  --layout-sidebar-w:     220px;   /* 좌측 내비 폭 */
   --layout-gnb-h:         60px;
   --layout-page-pad:      var(--sp-6);
-  --grid-columns:         6;
+  --grid-columns:         6;       /* 벤토 컬럼 수 */
   --grid-gap:             var(--sp-4);
+  --grid-row-h:           116px;   /* 벤토 행 높이 */
+  --hero-aspect:          21/9;    /* 히어로 비율 */
+  --hero-min-h:           420px;   /* 히어로 최소 높이 */
+  --hero-max-h:           640px;   /* 히어로 최대 높이 */
+  --card-grid-cols:       2;       /* 카드 그리드 열 수 */
+  --media-aspect:         16/9;    /* 썸네일·미디어 비율 */
 
   /* ── 인터랙션 ───────────────────────────────────────────── */
   --transition-fast: 150ms ease;
