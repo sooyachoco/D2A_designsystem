@@ -233,12 +233,15 @@ export function ThemeTuner() {
       const r = await fetch(`${BRIDGE_URL}/tokens`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scope: 'light', tokens: draft }),
+        body: JSON.stringify({ scope: 'light', source: 'design-system', tokens: draft }),
       });
       const j = await r.json();
       if (!r.ok || !j.ok) throw new Error(j.error || String(r.status));
       setBridge('saved');
-      setMessage(`✅ tokens.css 에 ${j.applied.length}개 반영 — HMR 로 즉시 적용됩니다`);
+      setMessage(
+        `✅ tokens.css 에 ${j.applied.length}개 반영 · 확정 기록 완료 — HMR 로 즉시 적용되고,`
+        + ' 다음 단계가 이 값을 그대로 씁니다',
+      );
       // 파일이 바뀌었으므로 인라인 오버라이드를 걷어내 파일값이 보이게 한다
       setTimeout(() => {
         for (const f of ALL_FIELDS) document.documentElement.style.removeProperty(f.name);
