@@ -44,7 +44,7 @@ export function DesignSystemPreview() {
           Tier M · Apple TV+ 벤토 + Warm Light Modern + Apple HIG + Pretendard
         </Text>
         <Text variant="caption" color="subtle">
-          우측 하단 🎛 테마 조정으로 토큰을 직접 바꿔볼 수 있습니다 (T·S·R 축). 조정한 값은 CSS 블록으로 복사해 가져갈 수 있습니다.
+          우측 하단 🎛 테마 조정으로 토큰을 직접 바꿔보고 확정할 수 있습니다 (T·S·R 축). 이 배포본에서는 확정하면 CSS 블록으로 복사됩니다.
         </Text>
       </header>
 

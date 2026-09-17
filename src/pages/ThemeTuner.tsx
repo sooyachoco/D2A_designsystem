@@ -141,7 +141,7 @@ type BridgeState = 'checking' | 'ready' | 'down' | 'blocked' | 'saving' | 'saved
 
 /**
  * HTTPS 페이지(GitHub Pages 등)에서는 http://127.0.0.1 로의 요청이 Mixed Content 로 차단된다.
- * 이 경우 브리지 저장 경로가 원천적으로 불가능하므로, 시도하지 않고 CSS 복사로 안내한다.
+ * 이 경우 브리지 저장 경로가 원천적으로 불가능하므로, 시도하지 않고 "확정"을 CSS 복사로 처리한다.
  */
 const BRIDGE_BLOCKED = window.location.protocol === 'https:';
 
@@ -251,8 +251,8 @@ export function ThemeTuner() {
     }
   }, [draft]);
 
-  /** 조정값을 CSS 블록으로 클립보드에 복사한다 (브리지를 못 쓰는 환경의 반출 경로). */
-  const copy = useCallback(async () => {
+  /** 조정값을 CSS 블록으로 클립보드에 복사한다 (브리지를 못 쓰는 환경의 확정 경로). */
+  const copyToClipboard = useCallback(async () => {
     const changed = Object.keys(draft).length;
     if (!changed) { setMessage('변경된 토큰이 없습니다'); return; }
     const block = toCssBlock(draft);
@@ -262,12 +262,25 @@ export function ThemeTuner() {
         navigator.clipboard.writeText(block),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500)),
       ]);
-      setMessage(`📋 CSS ${changed}줄 복사됨 — tokens.css 의 :root 에 붙여넣으세요`);
+      setMessage(`📋 확정값 ${changed}개를 복사했습니다 — tokens.css 의 :root 에 붙여넣으세요`);
     } catch {
       // clipboard 를 쓸 수 없으면 직접 선택·복사할 수 있게 원문을 노출한다
       setMessage(block);
     }
   }, [draft]);
+
+  /** 브리지로 파일에 쓸 수 있는 상태인가 — "확정"이 저장이 될지 복사가 될지를 가른다 */
+  const canSaveToFile = !BRIDGE_BLOCKED && (bridge === 'ready' || bridge === 'error');
+
+  /**
+   * 사용자가 하려는 일은 언제나 "이 값으로 확정"이다.
+   * 그것이 파일 저장인지 클립보드 복사인지는 환경이 정하므로 버튼은 하나로 둔다
+   * (어느 쪽이 될지는 누르기 전에 헤더 배지가 알려준다).
+   */
+  const confirmChanges = useCallback(
+    () => (canSaveToFile ? save() : copyToClipboard()),
+    [canSaveToFile, save, copyToClipboard],
+  );
 
   const changedCount = Object.keys(draft).length;
   const activeTab = TABS.find((t) => t.id === tabId) ?? TABS[0];
@@ -281,12 +294,12 @@ export function ThemeTuner() {
 
   const badge = {
     checking: { cls: 'neutral', text: '브리지 확인 중…' },
-    ready: { cls: 'ok', text: '● 브리지 연결됨 — 확정 저장 가능' },
-    down: { cls: 'warn', text: '○ 브리지 미실행 — bash scripts/start-curation-bridge.sh' },
-    blocked: { cls: 'neutral', text: '🔒 배포본 — 조정·복사만 가능 (로컬 저장은 HTTPS 제약)' },
+    ready: { cls: 'ok', text: '● 브리지 연결됨 — 확정하면 tokens.css 에 저장됩니다' },
+    down: { cls: 'warn', text: '○ 브리지 미실행 — 확정하면 CSS 로 복사됩니다 (저장하려면 bash scripts/start-curation-bridge.sh)' },
+    blocked: { cls: 'neutral', text: '🔒 배포본 — 확정하면 CSS 로 복사됩니다 (파일 저장은 HTTPS 제약)' },
     saving: { cls: 'neutral', text: '⏳ 저장 중…' },
     saved: { cls: 'ok', text: '✅ 저장됨' },
-    error: { cls: 'err', text: '❌ 오류' },
+    error: { cls: 'err', text: '❌ 오류 — 다시 확정하면 재시도합니다' },
   }[bridge];
 
   if (!open) {
@@ -394,22 +407,17 @@ export function ThemeTuner() {
             되돌리기
           </button>
           <button
-            className={`tuner__btn${BRIDGE_BLOCKED ? ' tuner__btn--primary' : ''}`}
-            onClick={copy}
-            disabled={!changedCount}
-            title="조정값을 CSS 블록으로 클립보드에 복사"
+            className="tuner__btn tuner__btn--primary"
+            onClick={confirmChanges}
+            disabled={!changedCount || bridge === 'saving'}
+            title={
+              canSaveToFile
+                ? '조정값을 tokens.css 에 저장'
+                : '조정값을 CSS 블록으로 클립보드에 복사 (파일 저장 불가 환경)'
+            }
           >
-            CSS 복사 {changedCount > 0 && `(${changedCount})`}
+            확정 {changedCount > 0 && `(${changedCount})`}
           </button>
-          {!BRIDGE_BLOCKED && (
-            <button
-              className="tuner__btn tuner__btn--primary"
-              onClick={save}
-              disabled={bridge !== 'ready' || !changedCount}
-            >
-              확정 저장 {changedCount > 0 && `(${changedCount})`}
-            </button>
-          )}
         </div>
       </footer>
     </aside>

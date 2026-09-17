@@ -147,6 +147,7 @@
 .tuner__btn:hover:not(:disabled) { background: var(--color-surface-alt); }
 .tuner__btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .tuner__btn--primary {
+  flex: 1.6;                         /* 확정이 주 동작 — 되돌리기보다 넓게 */
   background: var(--color-primary); border-color: var(--color-primary);
   color: var(--color-text-inverse);
 }
