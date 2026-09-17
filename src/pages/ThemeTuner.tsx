@@ -5,7 +5,10 @@
  * 확정 저장한다. AI 가 미리보기 HTML 을 다시 쓰는 왕복을 없애는 것이 목적이다.
  *
  * 커버 범위: 톤앤매너(T) · 디자인시스템(S) · 가독성(R) + 레이아웃(L)의 "파라미터" 층.
- * L 축의 "구조"(벤토 ↔ 분할 ↔ 스택)만 마크업이라 여기서 바꿀 수 없다.
+ * L 축의 "구조"(영역을 어떻게 나누는가)만 마크업이라 여기서 바꿀 수 없다.
+ *
+ * 조정 가능한 필드는 design-system/token-fields.json 이 정한다 — 프로젝트마다 토큰 이름이
+ * 다르므로 이 파일에 목록을 적지 않는다 (scripts/derive-token-fields.js 가 tokens.css 에서 파생).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './ThemeTuner.css';
