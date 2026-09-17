@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D2A · 조합 시안 v3 (L-3 · T-5* · S-4 · R-1 · Light Modern)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   Composition Preview v3 — Light Modern Mercer
+   L-3 Apple TV+ Bento | T-5* Light Sage/Teal | S-4 Apple HIG | R-1 Pretendard
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── T-5* Custom Light Palette ─────────────────────── */
+  --color-bg:              #FAFAF7;        /* 오프-화이트 (warm) */
+  --color-surface:         #FFFFFF;
+  --color-surface-alt:     #F4F2ED;
+  --color-border:          #EAE6DC;        /* 헤어라인 warm */
+  --color-border-strong:   #D9D3C4;
+  --color-text-strong:     #1E2138;        /* 딥 인디고 (15.1:1 vs bg ✅) */
+  --color-text:            #2D2F44;
+  --color-text-muted:      #6C6E80;
+  --color-text-subtle:     #9B9DAB;
+
+  --color-primary:          #5EA0A0;        /* 소프트 청록 — 링크·CTA (2.9:1 vs bg ⚠️ AA 3:1 미달) */
+  --color-primary-strong:   #3E7F7F;
+  --color-primary-soft:     #E3F0EF;
+  --color-sage:            #7BA88C;        /* 세이지 — 성공·긍정 */
+  --color-sage-soft:       #E6EFE9;
+  --color-live:           #E86752;        /* 세미-코럴 — 라이브만 */
+  --color-live-soft:      #FCE3DE;
+  --color-warn:             #E3B14B;        /* 햇살 — 이벤트·혜택 */
+  --color-warn-soft:        #F7EACD;
+
+  /* ── S-4 Apple HIG 공간·모양 ──────────────────────── */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+
+  --radius-sm: 8px;                  /* HIG 컴팩트 */
+  --radius-md: 12px;                 /* 기본 */
+  --radius-lg: 16px;                 /* 카드 */
+  --radius-xl: 24px;                 /* 벤토 히어로 */
+  --radius-full: 999px;
+
+  --shadow-1: 0 1px 2px 0 rgba(30,33,56,0.05);
+  --shadow-2: 0 4px 12px -3px rgba(30,33,56,0.08), 0 2px 4px -2px rgba(30,33,56,0.04);
+  --shadow-3: 0 16px 40px -8px rgba(30,33,56,0.12), 0 4px 12px -4px rgba(30,33,56,0.06);
+
+  /* ── R-1 Pretendard 표준 타이포 ────────────────────── */
+  --font-body: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-num: 'Space Grotesk', var(--font-body);
+
+  --fs-xs:    12px;
+  --fs-sm:    14px;
+  --fs-body:  15px;
+  --fs-lg:    17px;
+  --fs-h3:    20px;
+  --fs-h2:    26px;
+  --fs-h1:    34px;
+
+  --lh-body: 1.6;
+  --lh-heading: 1.25;
+  --tracking-tight: -0.015em;
+  --tracking-tighter: -0.025em;
+
+  /* ── L3 컴포넌트/레이아웃 파라미터 (치수 슬롯) ─────────────
+     구조는 마크업이 정하고, 치수는 여기서 정한다.
+     우측 하단 "콘텐츠 조정" 패널이 이 값들을 실시간으로 바꾼다. */
+  --layout-sidebar-w:        220px;   /* 좌측 내비 폭 */
+  --hero-aspect:  21/9;    /* 히어로 비율 */
+  --hero-min-h:   420px;   /* 히어로 최소 높이 */
+  --hero-max-h:   640px;   /* 히어로 최대 높이 */
+  --grid-columns:   6;       /* 벤토 컬럼 수 */
+  --grid-row-h:  116px;   /* 벤토 행 높이 */
+  --card-grid-cols:     2;       /* 최근 다시보기 열 수 */
+  --media-aspect: 16/9;    /* 카드 썸네일 비율 */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+  background: var(--color-bg); color: var(--color-text-strong);
+  min-height: 100vh; overflow-x: hidden;
+  padding-top: 116px;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* ── 상단 배지 바 ─────────────────────────────────── */
+#tab-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  height: 56px; padding: 0 var(--sp-6);
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+}
+#tab-bar .brand {
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
+  color: var(--color-text-strong); letter-spacing: var(--tracking-tight);
+}
+#tab-bar .brand em { color: var(--color-primary); font-style: normal; }
+#tab-bar .pill {
+  padding: 4px 10px; border-radius: var(--radius-sm);
+  font-family: var(--font-num); font-size: 11px; letter-spacing: 0.05em;
+  background: var(--color-surface); color: var(--color-text-muted); border: 1px solid var(--color-border);
+}
+#tab-bar .pill em { font-style: normal; margin-right: 4px; }
+#tab-bar .pill.l em { color: var(--color-primary); }
+#tab-bar .pill.t em { color: var(--color-sage); }
+#tab-bar .pill.s em { color: var(--color-warn); }
+#tab-bar .pill.r em { color: var(--color-live); }
+#tab-bar .meta { margin-left: auto; font-size: 12px; color: var(--color-text-subtle); font-family: var(--font-num); }
+
+/* ── GNB 플레이스홀더 ─────────────────────────────── */
+.gnb {
+  position: fixed; top: 56px; left: 0; right: 0; z-index: 9000;
+  height: 60px; padding: 0 var(--sp-6);
+  display: flex; align-items: center; gap: var(--sp-5);
+  background: var(--color-bg); border-bottom: 1px solid var(--color-border);
+}
+.gnb .logo {
+  font-family: var(--font-body); font-size: 21px; font-weight: 700;
+  letter-spacing: var(--tracking-tighter); color: var(--color-text-strong);
+}
+.gnb .logo em { color: var(--color-primary); font-style: normal; }
+.gnb nav { display: flex; gap: 22px; margin-left: 12px; }
+.gnb nav a { font-size: var(--fs-sm); color: var(--color-text-muted); font-weight: 500; }
+.gnb nav a:hover { color: var(--color-text-strong); }
+.gnb .user { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.gnb .user .ico {
+  width: 34px; height: 34px; border-radius: var(--radius-full);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  display: grid; place-items: center;
+}
+.gnb .user .login {
+  padding: 8px 16px; border-radius: var(--radius-md);
+  background: var(--color-text-strong); color: #fff;
+  font-size: var(--fs-sm); font-weight: 600;
+  transition: background .15s;
+}
+.gnb .user .login:hover { background: #000; }
+.gnb .badge {
+  position: absolute; right: var(--sp-6); bottom: -18px;
+  font-size: 10px; color: var(--color-text-subtle);
+}
+
+/* ── 셸 (좌 LNB + 벤토 콘텐츠) ────────────────────── */
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--sp-6); }
+.shell {
+  display: grid; grid-template-columns: var(--layout-sidebar-w) 1fr;
+  gap: var(--sp-6); padding: var(--sp-6) 0 var(--sp-8);
+}
+
+/* LNB */
+.lnb {
+  padding: var(--sp-4) 0;
+  position: sticky; top: 132px; height: fit-content;
+}
+.lnb-t {
+  font-family: var(--font-num); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--color-text-subtle); margin: var(--sp-5) var(--sp-3) var(--sp-2);
+}
+.lnb-t:first-child { margin-top: 0; }
+.lnb .item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px var(--sp-3); border-radius: var(--radius-md);
+  font-size: var(--fs-sm); font-weight: 500; color: var(--color-text);
+  transition: all .15s;
+}
+.lnb .item:hover { background: var(--color-surface); }
+.lnb .item.on { background: var(--color-text-strong); color: var(--color-surface); }
+.lnb .game {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px var(--sp-3); border-radius: var(--radius-md);
+  font-size: var(--fs-sm); color: var(--color-text);
+}
+.lnb .game:hover { background: var(--color-surface); }
+.lnb .game .g-ico {
+  width: 26px; height: 26px; border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-num); font-size: 10px; font-weight: 700;
+  color: #fff; flex: none;
+}
+.lnb .game .live-dot {
+  margin-left: auto; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-live); position: relative;
+}
+.lnb .game .live-dot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--color-live);
+  animation: pulse 1.8s ease-out infinite;
+}
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.55; } 100% { transform: scale(2.4); opacity: 0; } }
+.lnb .tt { display: block; padding: 0 var(--sp-3); font-size: 11px; color: var(--color-text-subtle); margin-top: var(--sp-2); font-family: var(--font-num); }
+
+/* ── Hero (풀 폭 · 시네마틱) ──────────────────────── */
+.hero-block {
+  display: block;                       /* <a> 기본 inline 재정의 */
+  position: relative; width: 100%;
+  aspect-ratio: var(--hero-aspect);     /* 시네마틱 비율 — 패널에서 조정 */
+  min-height: var(--hero-min-h);
+  max-height: var(--hero-max-h);
+  border-radius: var(--radius-xl); overflow: hidden;
+  background: var(--color-surface); box-shadow: var(--shadow-3);
+  margin-bottom: var(--sp-5);
+  cursor: pointer; transition: transform .3s, box-shadow .3s;
+}
+.hero-block:hover { transform: translateY(-3px); box-shadow: 0 24px 60px -12px rgba(30,33,56,0.18), 0 8px 20px -4px rgba(30,33,56,0.08); }
+.hero-block .art { position: absolute; inset: 0; overflow: hidden; }
+.hero-block .art svg { width: 100%; height: 100%; display: block; }
+.hero-block .overlay {
+  position: absolute; inset: 0; padding: var(--sp-7) var(--sp-8);
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: linear-gradient(180deg,
+    rgba(30,33,56,0.06) 0%, rgba(30,33,56,0.02) 40%, rgba(30,33,56,0.72) 100%);
+  z-index: 2;
+}
+.hero-block .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+.hero-block .kicker {
+  display: inline-block; padding: 4px 12px; border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.95); color: var(--color-text-strong);
+  font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  margin-bottom: var(--sp-3);
+}
+.hero-block h1 {
+  font-family: var(--font-body); font-size: 52px; font-weight: 700;
+  line-height: 1.08; letter-spacing: var(--tracking-tighter);
+  color: #fff; margin-bottom: var(--sp-4); max-width: 780px;
+}
+.hero-block .streamer { display: flex; align-items: center; gap: 12px; margin-bottom: var(--sp-4); color: rgba(255,255,255,0.9); font-size: var(--fs-body); }
+.hero-block .streamer .av {
+  width: 40px; height: 40px; border-radius: var(--radius-full);
+  background: var(--color-sage); color: #fff;
+  display: grid; place-items: center; font-family: var(--font-num); font-weight: 700; font-size: 14px;
+}
+.hero-block .streamer .r { font-size: var(--fs-sm); color: rgba(255,255,255,0.7); font-family: var(--font-num); }
+.hero-block .tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.hero-block .cta-watch {
+  position: absolute; bottom: var(--sp-7); right: var(--sp-8); z-index: 3;
+  padding: 14px 28px; border-radius: var(--radius-full);
+  background: #fff; color: var(--color-text-strong);
+  font-size: var(--fs-body); font-weight: 700;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow-2); transition: transform .18s;
+}
+.hero-block .cta-watch:hover { transform: scale(1.04); }
+
+/* ── 벤토 그리드 (L-3, 6컬 · 히어로 아래) ─────────── */
+.bento {
+  display: grid; grid-template-columns: repeat(var(--grid-columns), 1fr); grid-auto-rows: var(--grid-row-h);
+  gap: var(--sp-4); margin-bottom: var(--sp-7);
+}
+
+.cell {
+  background: var(--color-surface); border-radius: var(--radius-xl);
+  padding: var(--sp-5); position: relative; overflow: hidden;
+  border: 1px solid var(--color-border);
+  transition: transform .3s, box-shadow .3s;
+}
+.cell:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+
+/* Hero cell removed — 히어로는 벤토 밖으로 분리됨 */
+.cell.hero-old-removed {
+  display: none;
+}
+.cell.hero .art { position: absolute; inset: 0; overflow: hidden; border-radius: var(--radius-xl); }
+.cell.hero .art svg { width: 100%; height: 100%; display: block; }
+.cell.hero .overlay {
+  position: absolute; inset: 0; padding: var(--sp-6) var(--sp-7);
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: linear-gradient(180deg,
+    rgba(30,33,56,0.05) 0%, rgba(30,33,56,0.02) 40%, rgba(30,33,56,0.65) 100%);
+  z-index: 2; border-radius: var(--radius-xl);
+}
+.cell.hero .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+
+.live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: var(--radius-full);
+  background: var(--color-live); color: #fff;
+  font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+}
+.live-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: blink 1.4s infinite; }
+@keyframes blink { 50% { opacity: 0.35; } }
+
+.viewer-count {
+  padding: 6px 12px; border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+  color: var(--color-text-strong); font-family: var(--font-num); font-size: 12px; font-weight: 600;
+}
+.cell.hero .bot { position: relative; z-index: 2; }
+.cell.hero .kicker {
+  display: inline-block; padding: 3px 10px; border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.95); color: var(--color-text-strong);
+  font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  margin-bottom: var(--sp-3);
+}
+.cell.hero .bot h1 {
+  font-family: var(--font-body); font-size: var(--fs-h1); font-weight: 700;
+  line-height: var(--lh-heading); letter-spacing: var(--tracking-tighter);
+  color: #fff; margin-bottom: var(--sp-3); max-width: 92%;
+}
+.cell.hero .streamer { display: flex; align-items: center; gap: 10px; margin-bottom: var(--sp-3); color: rgba(255,255,255,0.9); font-size: var(--fs-sm); }
+.cell.hero .streamer .av {
+  width: 32px; height: 32px; border-radius: var(--radius-full);
+  background: var(--color-sage); color: #fff;
+  display: grid; place-items: center; font-family: var(--font-num); font-weight: 700; font-size: 12px;
+}
+.cell.hero .streamer .r { font-size: var(--fs-xs); color: rgba(255,255,255,0.7); font-family: var(--font-num); }
+.cell.hero .tags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+/* Chip / Pill (S-4 HIG 라운드) */
+.chip {
+  padding: 4px 10px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.01em;
+  backdrop-filter: blur(6px);
+}
+.chip-event { background: rgba(227,177,75,0.95); color: var(--color-text-strong); }
+.chip-reward { background: rgba(123,168,140,0.95); color: #fff; }
+.chip-drop { background: rgba(232,103,82,0.95); color: #fff; }
+.chip-neutral { background: var(--color-surface-alt); color: var(--color-text-muted); }
+
+/* Stat cell (span 2×1) */
+.cell.stat {
+  grid-column: span 2; grid-row: span 1;
+  padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; justify-content: center;
+}
+.cell.stat .lbl {
+  font-family: var(--font-num); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted);
+}
+.cell.stat .val {
+  font-family: var(--font-num); font-size: 30px; font-weight: 700;
+  color: var(--color-text-strong); letter-spacing: var(--tracking-tight); margin-top: 4px;
+}
+.cell.stat .val em { font-style: normal; color: var(--color-sage); font-size: 13px; font-weight: 600; margin-left: 6px; }
+.cell.stat .spark { position: absolute; bottom: 12px; right: 12px; opacity: 0.85; }
+
+/* Up-next list (span 2×2) */
+.cell.up { grid-column: span 2; grid-row: span 2; padding: var(--sp-4); }
+.cell.up h3 {
+  display: flex; align-items: center; gap: 8px; margin-bottom: var(--sp-3);
+  font-size: var(--fs-lg); font-weight: 700; color: var(--color-text-strong);
+  letter-spacing: var(--tracking-tight);
+}
+.cell.up h3::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary); }
+.cell.up .item {
+  display: flex; gap: 10px; padding: 10px 0;
+  border-top: 1px solid var(--color-border);
+}
+.cell.up .item:first-of-type { border-top: none; padding-top: 4px; }
+.cell.up .item .th { width: 60px; height: 34px; border-radius: var(--radius-sm); flex: none; overflow: hidden; }
+.cell.up .item .th svg { width: 100%; height: 100%; }
+.cell.up .item .txt { min-width: 0; flex: 1; }
+.cell.up .item .txt .t {
+  font-size: var(--fs-sm); font-weight: 600; color: var(--color-text-strong);
+  line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cell.up .item .txt .s {
+  font-family: var(--font-num); font-size: 11px; color: var(--color-text-muted); margin-top: 3px;
+}
+
+/* CTA cell */
+.cell.cta {
+  grid-column: span 2; grid-row: span 1;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-sage) 100%);
+  border: none; color: #fff; cursor: pointer;
+  padding: var(--sp-4) var(--sp-5);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.cell.cta:hover { transform: translateY(-2px); box-shadow: var(--shadow-3); }
+.cell.cta .ct-t {
+  font-size: var(--fs-lg); font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+.cell.cta .ct-s { font-size: var(--fs-sm); margin-top: 4px; opacity: 0.85; }
+
+/* ── 최근 다시보기 ────────────────────────────────── */
+.vod-sec { margin-bottom: var(--sp-7); }
+.vod-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--sp-4); margin-bottom: var(--sp-4); flex-wrap: wrap;
+}
+.vod-head h2 {
+  font-family: var(--font-body); font-size: var(--fs-h2); font-weight: 700;
+  letter-spacing: var(--tracking-tighter); color: var(--color-text-strong);
+}
+.vod-head .sub { font-size: var(--fs-sm); color: var(--color-text-muted); margin-top: 4px; }
+.vod-filter { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-chip {
+  padding: 8px 14px; border-radius: var(--radius-full);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  font-size: var(--fs-sm); font-weight: 500; color: var(--color-text-muted);
+  transition: all .14s;
+}
+.filter-chip:hover { border-color: var(--color-primary); color: var(--color-text-strong); }
+.filter-chip.on {
+  background: var(--color-text-strong); border-color: var(--color-text-strong); color: var(--color-surface);
+}
+
+.vod-grid { display: grid; grid-template-columns: repeat(var(--card-grid-cols), 1fr); gap: var(--sp-4); }
+.vd {
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  overflow: hidden; cursor: pointer;
+  transition: transform .28s, box-shadow .28s, border-color .16s;
+}
+.vd:hover {
+  transform: translateY(-3px); border-color: var(--color-primary-soft);
+  box-shadow: var(--shadow-2);
+}
+.vd .th { position: relative; aspect-ratio: var(--media-aspect); }
+.vd .th svg { width: 100%; height: 100%; display: block; }
+.vd .th .tags { position: absolute; top: 12px; left: 12px; display: flex; gap: 5px; }
+.vd .th .dur {
+  position: absolute; bottom: 10px; right: 10px;
+  padding: 3px 8px; border-radius: var(--radius-sm);
+  background: rgba(30,33,56,0.85); color: #fff;
+  font-family: var(--font-num); font-size: 11px; font-weight: 500;
+}
+.vd .info { padding: var(--sp-4) var(--sp-5); }
+.vd .info .g {
+  display: inline-block; padding: 3px 10px; border-radius: var(--radius-full);
+  background: var(--color-surface-alt); color: var(--color-text-muted);
+  font-family: var(--font-num); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: var(--sp-2);
+}
+.vd .info .t { font-size: var(--fs-body); font-weight: 600; color: var(--color-text-strong); line-height: 1.4; }
+.vd .info .s { font-family: var(--font-num); font-size: var(--fs-xs); color: var(--color-text-muted); margin-top: var(--sp-2); }
+
+.load-more {
+  display: block; margin: var(--sp-5) auto 0;
+  padding: 11px var(--sp-5); border-radius: var(--radius-md);
+  background: var(--color-surface); border: 1px solid var(--color-border-strong);
+  font-size: var(--fs-sm); font-weight: 600; color: var(--color-text-strong);
+  transition: all .15s;
+}
+.load-more:hover { background: var(--color-surface-alt); }
+
+/* ── 시안 노트 ───────────────────────────────────── */
+.dev-note {
+  max-width: 1440px; margin: var(--sp-5) auto 0; padding: var(--sp-4) var(--sp-5);
+  background: var(--color-primary-soft); border: 1px solid var(--color-primary);
+  border-radius: var(--radius-lg); color: var(--color-primary-strong);
+  font-size: var(--fs-sm);
+  display: flex; align-items: center; gap: var(--sp-3);
+}
+.dev-note strong { color: var(--color-text-strong); font-weight: 700; }
+
+/* ── 반응형 ──────────────────────────────────────── */
+@media (max-width: 1080px) {
+  .shell { grid-template-columns: 1fr; }
+  .lnb { position: static; height: auto; }
+  .hero-block { aspect-ratio: 16/9; min-height: 320px; }
+  .hero-block h1 { font-size: 36px; }
+  .hero-block .overlay { padding: var(--sp-5); }
+  .hero-block .cta-watch { bottom: var(--sp-5); right: var(--sp-5); padding: 10px 20px; }
+  .bento { grid-template-columns: repeat(3, 1fr); }
+  .cell.up { grid-column: span 3 !important; }
+  .cell.stat, .cell.cta { grid-column: span 3 !important; }
+}
+@media (max-width: 720px) {
+  .gnb nav { display: none; }
+  .hero-block { aspect-ratio: 4/3; min-height: 280px; }
+  .hero-block h1 { font-size: 26px; }
+  .hero-block .overlay { padding: var(--sp-4); }
+  .hero-block .streamer .av { width: 32px; height: 32px; }
+  .vod-grid { grid-template-columns: 1fr; }
+  .bento { grid-template-columns: 1fr; }
+  .cell.up, .cell.stat, .cell.cta { grid-column: span 1 !important; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div id="tab-bar">
+  <div class="brand">D2A Live <em>·</em> 조합 시안 v3</div>
+  <span class="pill l"><em>L</em>-3 Apple TV+ 벤토</span>
+  <span class="pill t"><em>T</em>-5* Light Modern</span>
+  <span class="pill s"><em>S</em>-4 Apple HIG</span>
+  <span class="pill r"><em>R</em>-1 Pretendard</span>
+  <span class="meta">Stage 1.5 preview v3 · Light Mode</span>
+</div>
+
+<div class="gnb">
+  <div class="logo">D2A<em>ON</em> Live</div>
+  <nav>
+    <a>Sports Channel A</a><a>Sports Channel B</a><a>Culture Channel</a><a>Music Channel</a><a>Sports Channel A+</a><a>더보기</a>
+  </nav>
+  <div class="user">
+    <button class="ico" aria-label="공지">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2D2F44" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="login">로그인</button>
+  </div>
+  <span class="badge">⚠ 공통 GNB 영역 — 실제 스크립트로 교체 예정</span>
+</div>
+
+<div class="dev-note">
+  ✨ <div><strong>재제안 v3 — 라이트 모던 (온화한 밝음)</strong> · L-3 Apple TV+ 벤토 유지 · 소프트 청록/세이지/코럴 팔레트 · Apple HIG 넉넉 여백 · Pretendard 담백한 위계</div>
+</div>
+
+<div class="wrap">
+  <div class="shell">
+    <!-- LNB -->
+    <aside class="lnb">
+      <div class="lnb-t">Menu</div>
+      <a class="item on">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+        홈
+      </a>
+      <a class="item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M16 4v16"/></svg>
+        참여 내역
+      </a>
+
+      <div class="lnb-t">Channels</div>
+      <a class="game"><span class="g-ico" style="background:#7BA88C">SA</span>Sports Channel A<span class="live-dot"></span></a>
+      <a class="game"><span class="g-ico" style="background:#5EA0A0">SB</span>Sports Channel B<span class="live-dot"></span></a>
+      <a class="game"><span class="g-ico" style="background:#E3B14B">CC</span>Culture Channel</a>
+      <a class="game"><span class="g-ico" style="background:#E86752">MC</span>Music Channel</a>
+      <a class="game"><span class="g-ico" style="background:#1E2138">SA+</span>Sports Channel A+</a>
+      <a class="game"><span class="g-ico" style="background:#9B9DAB">VC</span>Variety Channel</a>
+      <small class="tt">활성 순 정렬</small>
+    </aside>
+
+    <main>
+      <!-- ── Hero (풀 폭 시네마틱 21:9) ── -->
+      <a class="hero-block">
+        <div class="art">
+          <svg viewBox="0 0 1400 600" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="h1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7BA88C"/>
+                <stop offset="0.55" stop-color="#5EA0A0"/>
+                <stop offset="1" stop-color="#3E7F7F"/>
+              </linearGradient>
+              <radialGradient id="glow1" cx="25%" cy="30%" r="55%">
+                <stop offset="0" stop-color="#F7EACD" stop-opacity="0.7"/>
+                <stop offset="1" stop-color="#F7EACD" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="glow2" cx="80%" cy="75%" r="45%">
+                <stop offset="0" stop-color="#E86752" stop-opacity="0.4"/>
+                <stop offset="1" stop-color="#E86752" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="1400" height="600" fill="url(#h1)"/>
+            <rect width="1400" height="600" fill="url(#glow1)"/>
+            <rect width="1400" height="600" fill="url(#glow2)"/>
+            <circle cx="320" cy="200" r="140" fill="#E3B14B" opacity="0.4"/>
+            <circle cx="1080" cy="440" r="180" fill="#5EA0A0" opacity="0.35"/>
+            <circle cx="900" cy="180" r="60" fill="#F7EACD" opacity="0.55"/>
+          </svg>
+        </div>
+        <div class="overlay">
+          <div class="top-row">
+            <span class="live-badge">LIVE</span>
+            <span class="viewer-count">👁 8,241 명 시청 중</span>
+          </div>
+          <div>
+            <span class="kicker">Sports Channel A</span>
+            <h1>메인 프로그램 3라운드 결승,<br>지금 방송 중</h1>
+            <div class="streamer">
+              <div class="av">SA</div>
+              <div><div>Sports Channel A 공식 방송</div><div class="r">KST 19:30 시작 · 오늘 4번째 라이브</div></div>
+            </div>
+            <div class="tags">
+              <span class="chip chip-event">실시간 참여 진행 중</span>
+              <span class="chip chip-reward">리워드 지급</span>
+              <span class="chip chip-drop">혜택</span>
+            </div>
+          </div>
+        </div>
+        <span class="cta-watch">지금 시청 &nbsp;▶</span>
+      </a>
+
+      <!-- ── L-3 Bento Grid (히어로 아래 · 진행·예정 + 스탯) ── -->
+      <div class="bento">
+        <!-- Up-next (span 4×2 · 확장 리스트) -->
+        <div class="cell up" style="grid-column: span 4; grid-row: span 2;">
+          <h3>진행 · 예정 방송</h3>
+          <a class="item">
+            <div class="th"><svg viewBox="0 0 60 34" preserveAspectRatio="none"><defs><linearGradient id="u1"><stop offset="0" stop-color="#5EA0A0"/><stop offset="1" stop-color="#3E7F7F"/></linearGradient></defs><rect width="60" height="34" fill="url(#u1)"/></svg></div>
+            <div class="txt"><div class="t">Sports Channel B · 시즌 3 팀 배틀 결승</div><div class="s">LIVE · 3,120명 시청 중</div></div>
+          </a>
+          <a class="item">
+            <div class="th"><svg viewBox="0 0 60 34" preserveAspectRatio="none"><defs><linearGradient id="u5"><stop offset="0" stop-color="#E3B14B"/><stop offset="1" stop-color="#B88A2E"/></linearGradient></defs><rect width="60" height="34" fill="url(#u5)"/></svg></div>
+            <div class="txt"><div class="t">Sports Channel A+ · 신규 콘텐츠 리뷰 방송</div><div class="s">LIVE · 1,842명 시청 중</div></div>
+          </a>
+          <a class="item">
+            <div class="th"><svg viewBox="0 0 60 34" preserveAspectRatio="none"><defs><linearGradient id="u2"><stop offset="0" stop-color="#1E2138"/><stop offset="1" stop-color="#3E7F7F"/></linearGradient></defs><rect width="60" height="34" fill="url(#u2)"/></svg></div>
+            <div class="txt"><div class="t">Culture Channel 신규 기능 시연회</div><div class="s">21:00 예정 · 알림 12명</div></div>
+          </a>
+          <a class="item">
+            <div class="th"><svg viewBox="0 0 60 34" preserveAspectRatio="none"><defs><linearGradient id="u3"><stop offset="0" stop-color="#E86752"/><stop offset="1" stop-color="#B8452F"/></linearGradient></defs><rect width="60" height="34" fill="url(#u3)"/></svg></div>
+            <div class="txt"><div class="t">Music Channel 커뮤니티 콜라보 방송</div><div class="s">22:00 예정 · 알림 34명</div></div>
+          </a>
+        </div>
+
+        <!-- Stat + CTA (우측 컬럼) -->
+        <div class="cell stat" style="grid-column: span 2;">
+          <div class="lbl">지금 라이브</div>
+          <div class="val">7<em>+2 준비</em></div>
+          <svg class="spark" width="88" height="30" viewBox="0 0 88 30">
+            <polyline points="0,22 12,18 24,20 36,12 48,14 60,8 72,10 88,6"
+              fill="none" stroke="#5EA0A0" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <a class="cell cta" style="grid-column: span 2;">
+          <div class="ct-t">🔔 시작 알림 받기</div>
+          <div class="ct-s">채널을 구독하면 앱으로 알림이 옵니다.</div>
+        </a>
+      </div>
+
+      <!-- ── 최근 다시보기 ── -->
+      <div class="vod-sec">
+        <div class="vod-head">
+          <div>
+            <h2>최근 다시보기</h2>
+            <div class="sub">최근 업로드된 방송을 채널별로 필터링해 볼 수 있어요.</div>
+          </div>
+          <div class="vod-filter">
+            <button class="filter-chip on">전체</button>
+            <button class="filter-chip">Sports Channel A</button>
+            <button class="filter-chip">Sports Channel B</button>
+            <button class="filter-chip">Culture Channel</button>
+            <button class="filter-chip">Music Channel</button>
+          </div>
+        </div>
+
+        <div class="vod-grid">
+          <a class="vd">
+            <div class="th">
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <defs><linearGradient id="v1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7BA88C"/><stop offset="1" stop-color="#5EA0A0"/></linearGradient></defs>
+                <rect width="400" height="225" fill="url(#v1)"/>
+                <circle cx="120" cy="80" r="52" fill="#F7EACD" opacity="0.7"/>
+                <path d="M0 175 L110 130 L220 155 L400 100 L400 225 L0 225 Z" fill="#1E2138" opacity="0.28"/>
+              </svg>
+              <div class="tags"><span class="chip chip-event">참여형</span><span class="chip chip-reward">리워드</span></div>
+              <span class="dur">1:42:18</span>
+            </div>
+            <div class="info">
+              <span class="g">Sports Channel A</span>
+              <div class="t">메인 프로그램 2라운드 24강 (전편)</div>
+              <div class="s">3시간 전 · 조회 24,180</div>
+            </div>
+          </a>
+
+          <a class="vd">
+            <div class="th">
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <defs><linearGradient id="v2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5EA0A0"/><stop offset="1" stop-color="#2A4E4E"/></linearGradient></defs>
+                <rect width="400" height="225" fill="url(#v2)"/>
+                <rect x="80" y="60" width="240" height="110" fill="#F7EACD" opacity="0.18" rx="6"/>
+                <circle cx="200" cy="115" r="34" fill="#E3B14B" opacity="0.85"/>
+              </svg>
+              <div class="tags"><span class="chip chip-reward">리워드</span></div>
+              <span class="dur">2:08:44</span>
+            </div>
+            <div class="info">
+              <span class="g">Sports Channel B</span>
+              <div class="t">시즌 2 결승 하이라이트 다시보기</div>
+              <div class="s">어제 · 조회 18,904</div>
+            </div>
+          </a>
+
+          <a class="vd">
+            <div class="th">
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <defs><linearGradient id="v3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1E2138"/><stop offset="1" stop-color="#5EA0A0"/></linearGradient></defs>
+                <rect width="400" height="225" fill="url(#v3)"/>
+                <path d="M0 0 L200 0 L160 225 L0 225 Z" fill="#7BA88C" opacity="0.35"/>
+                <circle cx="280" cy="100" r="48" fill="#F7EACD" opacity="0.75"/>
+              </svg>
+              <div class="tags"><span class="chip chip-event">투표</span></div>
+              <span class="dur">54:12</span>
+            </div>
+            <div class="info">
+              <span class="g">Culture Channel</span>
+              <div class="t">신규 기능 시연 · 실시간 반응 투표</div>
+              <div class="s">2일 전 · 조회 12,566</div>
+            </div>
+          </a>
+
+          <a class="vd">
+            <div class="th">
+              <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">
+                <defs><linearGradient id="v4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E86752"/><stop offset="1" stop-color="#B8452F"/></linearGradient></defs>
+                <rect width="400" height="225" fill="url(#v4)"/>
+                <circle cx="100" cy="80" r="60" fill="#E3B14B" opacity="0.8"/>
+                <path d="M0 200 L120 150 L240 175 L400 110 L400 225 L0 225 Z" fill="#1E2138" opacity="0.3"/>
+              </svg>
+              <div class="tags"><span class="chip chip-drop">혜택</span><span class="chip chip-reward">리워드</span></div>
+              <span class="dur">1:15:26</span>
+            </div>
+            <div class="info">
+              <span class="g">Music Channel</span>
+              <div class="t">Music Channel 커뮤니티 콜라보 하이라이트</div>
+              <div class="s">3일 전 · 조회 9,412</div>
+            </div>
+          </a>
+        </div>
+
+        <button class="load-more">더보기 (10개씩 추가 로드)</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     콘텐츠 조정 패널 (L3 치수 슬롯)
+     구조는 그대로 두고 치수만 바꾼다. 시안 확정 후 세부를 다듬는 용도.
+     ═══════════════════════════════════════════════════════════ -->
+<style>
+.cf-fab {
+  position: fixed; right: 24px; bottom: 24px; z-index: 9500;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border: none; border-radius: 999px;
+  background: var(--color-text-strong); color: var(--color-surface);
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  box-shadow: var(--shadow-3); cursor: pointer;
+  transition: transform .18s;
+}
+.cf-fab:hover { transform: translateY(-2px); }
+.cf-fab__n {
+  display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px;
+  border-radius: 999px; background: var(--live); color: #fff;
+  font-family: var(--font-num); font-size: 11px; font-weight: 700;
+}
+/* hidden 속성이 위 display 선언에 밀리지 않도록 명시 */
+.cf-fab__n[hidden] { display: none; }
+.cf-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 9500;
+  width: 330px; max-width: 92vw; display: none; flex-direction: column;
+  background: var(--color-surface); border-left: 1px solid var(--color-border);
+  box-shadow: var(--shadow-3); font-family: var(--font-body);
+}
+.cf-panel.on { display: flex; }
+.cf-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 20px; border-bottom: 1px solid var(--color-border);
+}
+.cf-title { font-size: 17px; font-weight: 700; color: var(--color-text-strong); letter-spacing: var(--tracking-tight); }
+.cf-sub { margin-top: 6px; font-size: 12px; line-height: 1.5; color: var(--color-text-muted); }
+/* 누르기 전에 "확정"이 파일 저장인지 복사인지 알려준다 */
+.cf-badge { margin-top: 8px; font-size: 11px; line-height: 1.45; font-weight: 600; }
+.cf-badge--ok { color: var(--color-sage-strong, #4F8168); }
+.cf-badge--warn { color: var(--color-warn-strong, #B88A2E); }
+.cf-badge--err { color: var(--color-live-strong, #C24A38); }
+.cf-badge--neutral { color: var(--color-text-muted); }
+.cf-x {
+  flex: none; width: 32px; height: 32px; border: none; border-radius: 8px;
+  background: var(--color-surface-alt); color: var(--color-text-muted); cursor: pointer; font-size: 14px;
+}
+.cf-tabs { display: flex; gap: 4px; padding: 0 20px; border-bottom: 1px solid var(--color-border); }
+.cf-tab {
+  padding: 10px 14px; border: none; background: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  color: var(--color-text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.cf-tab.on { color: var(--color-text-strong); border-bottom-color: var(--color-primary); }
+.cf-tab__n {
+  display: inline-grid; place-items: center; min-width: 16px; height: 16px; margin-left: 5px;
+  padding: 0 4px; border-radius: 999px; background: var(--color-primary); color: #fff;
+  font-family: var(--font-num); font-size: 10px;
+}
+.cf-tab__n[hidden] { display: none; }
+.cf-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
+.cf-group { margin-bottom: 24px; }
+.cf-group h4 {
+  display: flex; align-items: center; gap: 8px; margin: 0 0 12px;
+  font-size: 13px; font-weight: 700; color: var(--color-text-strong);
+}
+.cf-group h4::before {
+  content: ''; width: 18px; height: 18px; border-radius: 6px;
+  background: var(--color-primary-soft, var(--color-surface-alt));
+}
+.cf-f { margin-bottom: 14px; }
+.cf-l {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 4px;
+  font-size: 12px; font-weight: 500; color: var(--color-text);
+}
+.cf-var { font-family: var(--font-num); font-size: 10px; color: var(--color-text-subtle); }
+.cf-c { display: flex; align-items: center; gap: 12px; }
+.cf-c input[type=range] { flex: 1; accent-color: var(--color-primary); cursor: pointer; }
+.cf-c select {
+  flex: 1; padding: 6px 8px; border: 1px solid var(--color-border); border-radius: 8px;
+  background: var(--color-surface); color: var(--color-text-strong); font-family: var(--font-body); font-size: 13px;
+}
+.cf-v {
+  flex: none; min-width: 58px; text-align: right;
+  font-family: var(--font-num); font-size: 12px; color: var(--color-text-muted);
+}
+.cf-note {
+  margin: 0; padding: 12px; background: var(--color-surface-alt); border-radius: 12px;
+  font-size: 12px; line-height: 1.55; color: var(--color-text-muted);
+}
+.cf-foot { padding: 16px 20px; border-top: 1px solid var(--color-border); }
+.cf-msg {
+  margin-bottom: 12px; font-family: var(--font-num); font-size: 11px; line-height: 1.5;
+  color: var(--color-text-muted); white-space: pre-wrap; max-height: 150px; overflow-y: auto; user-select: text;
+}
+.cf-acts { display: flex; gap: 8px; }
+.cf-btn {
+  flex: 1; padding: 11px; border: 1px solid var(--color-border); border-radius: 10px;
+  background: var(--color-surface); color: var(--color-text-strong);
+  font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.cf-btn:disabled { opacity: .45; cursor: not-allowed; }
+.cf-btn--p { flex: 1.6; background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+@media (max-width: 720px) { .cf-panel { width: 100%; max-width: 100%; } }
+</style>
+
+<button class="cf-fab" id="cf-fab">🎚 디자인 조정<span class="cf-fab__n" id="cf-n" hidden>0</span></button>
+
+<aside class="cf-panel" id="cf-panel" aria-label="디자인 토큰 조정">
+  <header class="cf-head">
+    <div>
+      <div class="cf-title">🎚 디자인 조정</div>
+      <div class="cf-sub">실제 화면 위에서 <strong>색·모양·타이포·치수</strong>를 바로 바꿉니다.</div>
+      <div class="cf-badge cf-badge--neutral" id="cf-badge">브리지 확인 중…</div>
+    </div>
+    <button class="cf-x" id="cf-x" aria-label="닫기">✕</button>
+  </header>
+
+  <nav class="cf-tabs" id="cf-tabs" role="tablist"></nav>
+
+  <div class="cf-body">
+    <div id="cf-fields"></div>
+    <p class="cf-note" id="cf-note"></p>
+  </div>
+
+  <footer class="cf-foot">
+    <div class="cf-msg" id="cf-msg" hidden></div>
+    <div class="cf-acts">
+      <button class="cf-btn" id="cf-reset" disabled>되돌리기</button>
+      <button class="cf-btn cf-btn--p" id="cf-copy" disabled
+              title="조정한 치수를 CSS 로 복사합니다">확정</button>
+    </div>
+  </footer>
+</aside>
+
+<!-- token-fields:begin — 생성물. 손으로 고치지 말고 `node scripts/sync-token-fields.js` 로 재생성한다.
+     원본 SSOT: frontend/src/design-system/token-fields.json -->
+<script type="application/json" id="cf-token-fields">{"tabs":[{"id":"global","label":"전역","hint":"색·모양·타이포 — 화면 전체에 적용됩니다.","groups":[{"title":"톤앤매너","axis":"T","fields":[{"kind":"color","name":"--color-bg","label":"페이지 배경"},{"kind":"color","name":"--color-surface","label":"카드 표면"},{"kind":"color","name":"--color-text-strong","label":"본문 텍스트"},{"kind":"color","name":"--color-primary","label":"Primary 액센트"},{"kind":"color","name":"--color-sage","label":"성공 · 긍정"},{"kind":"color","name":"--color-live","label":"라이브 배지"},{"kind":"color","name":"--color-warn","label":"이벤트 · 알림"}]},{"title":"디자인시스템","axis":"S","fields":[{"kind":"range","name":"--radius-sm","label":"작은 radius","min":3,"max":20,"step":1,"unit":"px"},{"kind":"range","name":"--radius-md","label":"기본 radius","min":3,"max":24,"step":1,"unit":"px"},{"kind":"range","name":"--radius-lg","label":"카드 radius","min":4,"max":32,"step":1,"unit":"px"},{"kind":"range","name":"--radius-xl","label":"벤토 radius","min":8,"max":48,"step":2,"unit":"px"}]},{"title":"가독성","axis":"R","fields":[{"kind":"range","name":"--fs-body","label":"본문 크기","min":4,"max":30,"step":1,"unit":"px"},{"kind":"range","name":"--fs-h1","label":"H1 크기","min":10,"max":68,"step":2,"unit":"px"},{"kind":"range","name":"--fs-hero","label":"히어로 크기","min":16,"max":104,"step":2,"unit":"px"},{"kind":"range","name":"--lh-body","label":"본문 행간","min":1,"max":2.4,"step":0.05,"unit":""}]}]},{"id":"content","label":"콘텐츠","hint":"레이아웃 치수 — 구조는 마크업이라 여기서 바꿀 수 없습니다.","groups":[{"title":"레이아웃 · 치수 슬롯","axis":"L","fields":[{"kind":"range","name":"--layout-content-max-w","label":"콘텐츠 최대 폭","min":430,"max":2880,"step":10,"unit":"px"},{"kind":"range","name":"--layout-sidebar-w","label":"LNB 폭","min":68,"max":440,"step":4,"unit":"px"},{"kind":"range","name":"--layout-gnb-h","label":"GNB 높이","min":18,"max":120,"step":2,"unit":"px"},{"kind":"range","name":"--grid-columns","label":"벤토 컬럼 수","min":1,"max":12,"step":1,"unit":""},{"kind":"range","name":"--grid-row-h","label":"벤토 행 높이","min":36,"max":232,"step":4,"unit":"px"},{"kind":"select","name":"--hero-aspect","label":"히어로 비율","options":[{"value":"21/9","label":"21:9"},{"value":"2/1","label":"2:1"},{"value":"16/9","label":"16:9"},{"value":"3/2","label":"3:2"},{"value":"4/3","label":"4:3"},{"value":"1/1","label":"1:1"}]},{"kind":"range","name":"--hero-min-h","label":"히어로 최소 높이","min":130,"max":840,"step":10,"unit":"px"},{"kind":"range","name":"--hero-max-h","label":"히어로 최대 높이","min":190,"max":1280,"step":10,"unit":"px"},{"kind":"range","name":"--card-grid-cols","label":"카드 그리드 열 수","min":1,"max":4,"step":1,"unit":""},{"kind":"select","name":"--media-aspect","label":"썸네일 비율","options":[{"value":"21/9","label":"21:9"},{"value":"2/1","label":"2:1"},{"value":"16/9","label":"16:9"},{"value":"3/2","label":"3:2"},{"value":"4/3","label":"4:3"},{"value":"1/1","label":"1:1"}]}]}]}]}</script>
+<!-- token-fields:end -->
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var panel = document.getElementById('cf-panel');
+  var fab = document.getElementById('cf-fab');
+  var badge = document.getElementById('cf-n');
+  var msg = document.getElementById('cf-msg');
+  var btnReset = document.getElementById('cf-reset');
+  var btnCopy = document.getElementById('cf-copy');
+  var badgeEl = document.getElementById('cf-badge');
+  var tabsEl = document.getElementById('cf-tabs');
+  var fieldsEl = document.getElementById('cf-fields');
+  var noteEl = document.getElementById('cf-note');
+  var draft = {};
+  var base = {};
+
+  // 필드 정의는 token-fields.json 이 SSOT — 여기엔 인라인된 사본만 있다
+  var TABS = [];
+  try {
+    TABS = (JSON.parse(document.getElementById('cf-token-fields').textContent) || {}).tabs || [];
+  } catch (e) { TABS = []; }
+  var activeTab = TABS.length ? TABS[0].id : null;
+
+  function read(name) {
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  }
+  function num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+  function norm(v) { return String(v).replace(/\s+/g, ''); }
+
+  function allFields() {
+    var out = [];
+    TABS.forEach(function (t) {
+      t.groups.forEach(function (g) { g.fields.forEach(function (f) { out.push(f); }); });
+    });
+    return out;
+  }
+
+  // 기준선은 조정 전 파일 원본값 — "되돌리기" 기준이므로 렌더보다 먼저 한 번만 잡는다
+  allFields().forEach(function (f) { base[f.name] = read(f.name); });
+
+  function currentOf(name) {
+    return draft[name] !== undefined ? draft[name] : base[name];
+  }
+
+  /** 활성 탭의 그룹·필드를 그린다. 값은 draft > base 순으로 반영한다. */
+  function renderFields() {
+    var tab = TABS.filter(function (t) { return t.id === activeTab; })[0];
+    if (!tab) return;
+    noteEl.textContent = tab.hint || '';
+    fieldsEl.innerHTML = '';
+
+    tab.groups.forEach(function (g) {
+      var sec = document.createElement('section');
+      sec.className = 'cf-group';
+      var h = document.createElement('h4');
+      h.textContent = g.axis + ' · ' + g.title;
+      sec.appendChild(h);
+
+      g.fields.forEach(function (f) {
+        var cur = currentOf(f.name);
+        var wrap = document.createElement('div');
+        wrap.className = 'cf-f';
+
+        var lab = document.createElement('div');
+        lab.className = 'cf-l';
+        var ln = document.createElement('span');
+        ln.textContent = f.label;
+        var lv = document.createElement('span');
+        lv.className = 'cf-var';
+        lv.textContent = f.name;
+        lab.appendChild(ln); lab.appendChild(lv);
+        wrap.appendChild(lab);
+
+        var ctl = document.createElement('div');
+        ctl.className = 'cf-c';
+        var input;
+
+        if (f.kind === 'color') {
+          input = document.createElement('input');
+          input.type = 'color';
+          input.value = /^#[0-9a-f]{6}$/i.test(cur) ? cur : '#000000';
+        } else if (f.kind === 'select') {
+          input = document.createElement('select');
+          f.options.forEach(function (o) {
+            var op = document.createElement('option');
+            op.value = o.value; op.textContent = o.label;
+            if (norm(o.value) === norm(cur)) op.selected = true;
+            input.appendChild(op);
+          });
+        } else {
+          input = document.createElement('input');
+          input.type = 'range';
+          input.min = f.min; input.max = f.max; input.step = f.step;
+          input.value = num(cur);
+        }
+        input.dataset.var = f.name;
+
+        var out = document.createElement('span');
+        out.className = 'cf-v';
+        out.dataset.out = f.name;
+        out.textContent = cur;
+
+        input.addEventListener('input', function () {
+          var value;
+          if (f.kind === 'color') value = input.value.toUpperCase();
+          else if (f.kind === 'select') value = input.value;
+          else value = input.value + (f.unit || '');
+          root.style.setProperty(f.name, value);
+          if (norm(value) === norm(base[f.name])) delete draft[f.name];
+          else draft[f.name] = value;
+          out.textContent = value;
+          sync();
+        });
+
+        ctl.appendChild(input); ctl.appendChild(out);
+        wrap.appendChild(ctl);
+        sec.appendChild(wrap);
+      });
+      fieldsEl.appendChild(sec);
+    });
+  }
+
+  /** 탭별 변경 건수 — 다른 탭에 조정이 숨어 있어도 보이게 한다 */
+  function countIn(tab) {
+    var n = 0;
+    tab.groups.forEach(function (g) {
+      g.fields.forEach(function (f) { if (draft[f.name] !== undefined) n++; });
+    });
+    return n;
+  }
+
+  function renderTabs() {
+    tabsEl.innerHTML = '';
+    TABS.forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'cf-tab' + (t.id === activeTab ? ' on' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', t.id === activeTab ? 'true' : 'false');
+      b.textContent = t.label;
+      var n = countIn(t);
+      var sp = document.createElement('span');
+      sp.className = 'cf-tab__n';
+      sp.textContent = n;
+      if (!n) sp.hidden = true;
+      b.appendChild(sp);
+      b.addEventListener('click', function () {
+        activeTab = t.id;
+        renderTabs(); renderFields();
+      });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function sync() {
+    var n = Object.keys(draft).length;
+    badge.hidden = n === 0;
+    badge.textContent = n;
+    btnReset.disabled = n === 0;
+    btnCopy.disabled = n === 0;
+    btnCopy.textContent = n ? '확정 (' + n + ')' : '확정';
+    renderTabs();
+  }
+
+  function openPanel() { panel.classList.add('on'); fab.style.display = 'none'; }
+  fab.addEventListener('click', openPanel);
+  // ?panel=open 으로 열린 상태 진입 (링크 공유·문서 캡처용)
+  if (new URLSearchParams(location.search).get('panel') === 'open') openPanel();
+  // ?tab=global|content 로 특정 탭을 열어둘 수 있다
+  var qTab = new URLSearchParams(location.search).get('tab');
+  if (qTab && TABS.some(function (t) { return t.id === qTab; })) activeTab = qTab;
+
+  document.getElementById('cf-x').addEventListener('click', function () {
+    panel.classList.remove('on'); fab.style.display = '';
+  });
+
+  btnReset.addEventListener('click', function () {
+    Object.keys(base).forEach(function (name) { root.style.removeProperty(name); });
+    draft = {};
+    msg.hidden = true;
+    renderFields();
+    sync();
+  });
+
+  function copyToClipboard(names) {
+    var w = Math.max.apply(null, names.map(function (k) { return k.length; }));
+    var block = ':root {\n' + names.map(function (k) {
+      return '  ' + k + ':' + Array(w - k.length + 2).join(' ') + draft[k] + ';';
+    }).join('\n') + '\n}';
+
+    msg.hidden = false;
+    var done = false;
+    var fallback = setTimeout(function () {
+      if (!done) { done = true; msg.textContent = block; }
+    }, 1500);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(block).then(function () {
+        if (done) return;
+        done = true; clearTimeout(fallback);
+        msg.textContent = '📋 확정값 ' + names.length + '개를 복사했습니다 — tokens.css 의 L3 슬롯에 붙여넣으세요';
+      })['catch'](function () {
+        if (done) return;
+        done = true; clearTimeout(fallback); msg.textContent = block;
+      });
+    } else {
+      done = true; clearTimeout(fallback); msg.textContent = block;
+    }
+  }
+
+  // ── 브리지 연동 ────────────────────────────────────────────────
+  // 시안은 file:// 로 열려 파일에 직접 쓸 수 없다. 브리지가 떠 있으면 "확정"이
+  // tokens.css 반영 + state.json 플래그까지 끝내므로 다음 단계로 바로 이어진다.
+  var BRIDGE = 'http://127.0.0.1:4747';
+  var bridgeReady = false;
+  // HTTPS 로 배포된 사본에서는 http://127.0.0.1 요청이 Mixed Content 로 차단된다.
+  // 시도해봐야 실패하므로 아예 건너뛰고, "브리지를 켜라"는 안내도 하지 않는다.
+  var BRIDGE_BLOCKED = location.protocol === 'https:';
+
+  var BADGES = {
+    checking: ['neutral', '브리지 확인 중…'],
+    ready:    ['ok',      '● 브리지 연결됨 — 확정하면 tokens.css 에 저장됩니다'],
+    blocked:  ['neutral', '🔒 배포본 — 확정하면 CSS 로 복사됩니다 (파일 저장은 HTTPS 제약)'],
+    down:     ['warn',    '○ 브리지 미실행 — 확정하면 CSS 로 복사됩니다 (저장하려면 bash scripts/start-curation-bridge.sh)'],
+    saving:   ['neutral', '⏳ 저장 중…'],
+    saved:    ['ok',      '✅ 저장됨'],
+    error:    ['err',     '❌ 오류 — 다시 확정하면 재시도합니다']
+  };
+  function setBadge(state) {
+    var b = BADGES[state] || BADGES.checking;
+    badgeEl.className = 'cf-badge cf-badge--' + b[0];
+    badgeEl.textContent = b[1];
+  }
+
+  function ping() {
+    if (BRIDGE_BLOCKED) { bridgeReady = false; setBadge('blocked'); return; }
+    if (!window.fetch) { bridgeReady = false; setBadge('down'); return; }
+    fetch(BRIDGE + '/health', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        bridgeReady = !!(j && j.ok && j.ver >= 3);
+        setBadge(bridgeReady ? 'ready' : 'down');
+      })['catch'](function () { bridgeReady = false; setBadge('down'); });
+  }
+
+  function saveToBridge(names) {
+    setBadge('saving');
+    msg.hidden = false;
+    msg.textContent = '저장 중…';
+    fetch(BRIDGE + '/tokens', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scope: 'light', source: 'composition-preview', tokens: draft })
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+      .then(function (r) {
+        if (!r.ok || !r.body.ok) throw new Error(r.body.error || '저장 실패');
+        setBadge('saved');
+        msg.textContent = '✅ tokens.css 에 ' + r.body.applied.length + '개 반영 · 확정 기록 완료'
+          + ' — 다음 단계(Stage 1.7 → create-spec Step 2.7)가 이 값을 그대로 씁니다';
+        // 파일이 SSOT 가 됐으므로 인라인 오버라이드를 걷어낸다
+        setTimeout(function () {
+          Object.keys(base).forEach(function (n) { root.style.removeProperty(n); });
+          draft = {};
+          sync();
+        }, 600);
+      })['catch'](function (e) {
+        setBadge('error');
+        msg.hidden = false;
+        msg.textContent = '❌ 저장 실패: ' + e.message + ' — 아래 CSS 를 직접 반영하세요';
+        setTimeout(function () { copyToClipboard(names); }, 1200);
+      });
+  }
+
+  btnCopy.addEventListener('click', function () {
+    var names = Object.keys(draft);
+    if (!names.length) return;
+    if (bridgeReady) saveToBridge(names);
+    else copyToClipboard(names);
+  });
+
+  ping();
+  if (!BRIDGE_BLOCKED) setInterval(ping, 15000);
+  renderFields();
+  sync();
+})();
+</script>
+</body>
+</html>
