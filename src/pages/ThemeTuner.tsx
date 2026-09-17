@@ -160,7 +160,11 @@ export function ThemeTuner() {
     () => new URLSearchParams(window.location.search).get('tuner') === 'open',
   );
   const [draft, setDraft] = useState<Record<string, string>>({});
-  const [tabId, setTabId] = useState<string>('global');
+  // ?tab=content 로 특정 탭을 열어둘 수 있다 (링크 공유·문서 캡처용)
+  const [tabId, setTabId] = useState<string>(() => {
+    const q = new URLSearchParams(window.location.search).get('tab');
+    return TABS.some((t) => t.id === q) ? (q as string) : 'global';
+  });
   const [bridge, setBridge] = useState<BridgeState>('checking');
   const [message, setMessage] = useState('');
   /** 패널을 처음 연 시점의 파일 원본값 — "되돌리기" 기준선 */
