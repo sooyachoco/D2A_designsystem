@@ -21,13 +21,13 @@
   --color-border:        #EAE6DC;
   --color-border-strong: #D9D3C4;
 
-  --color-text-strong:   #1E2138;    /* 딥 인디고 · 12.2:1 vs bg ✅ */
+  --color-text-strong:   #1E2138;    /* 딥 인디고 · 15.1:1 vs bg ✅ */
   --color-text:          #2D2F44;
   --color-text-muted:    #6C6E80;
   --color-text-subtle:   #9B9DAB;
   --color-text-inverse:  #FFFFFF;
 
-  --color-primary:       #5EA0A0;    /* 소프트 청록 · 4.8:1 vs bg ✅ */
+  --color-primary:       #5EA0A0;    /* 소프트 청록 · 2.9:1 vs bg ⚠️ */
   --color-primary-strong:#3E7F7F;
   --color-primary-soft:  #E3F0EF;
 

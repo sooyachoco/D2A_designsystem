@@ -4,11 +4,14 @@
  * tokens.css 의 CSS 변수를 브라우저에서 즉시 바꿔보고, 마음에 들면 브리지 서버로
  * 확정 저장한다. AI 가 미리보기 HTML 을 다시 쓰는 왕복을 없애는 것이 목적이다.
  *
- * 커버 범위: 톤앤매너(T) · 디자인시스템(S) · 가독성(R) 축.
- * 레이아웃(L) 축은 마크업 구조라 여기서 바꿀 수 없다.
+ * 커버 범위: 톤앤매너(T) · 디자인시스템(S) · 가독성(R) + 레이아웃(L)의 "파라미터" 층.
+ * L 축의 "구조"(벤토 ↔ 분할 ↔ 스택)만 마크업이라 여기서 바꿀 수 없다.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './ThemeTuner.css';
+// 필드 정의 SSOT — 시안 패널도 같은 파일을 인라인해서 쓴다 (scripts/sync-token-fields.js).
+// 여기에 손으로 필드를 적지 않는다: 두 패널이 갈라지는 원인이 된다.
+import tokenFields from '../design-system/token-fields.json';
 
 const BRIDGE_URL = 'http://127.0.0.1:4747';
 const STORAGE_KEY = 'd2a-theme-tuner-draft';
@@ -21,105 +24,13 @@ type Field =
 type Group = { title: string; axis: string; fields: Field[] };
 type Tab = { id: string; label: string; hint: string; groups: Group[] };
 
-const GLOBAL_GROUPS: Group[] = [
-  {
-    title: '톤앤매너',
-    axis: 'T',
-    fields: [
-      { kind: 'color', name: '--color-bg', label: '페이지 배경' },
-      { kind: 'color', name: '--color-surface', label: '카드 표면' },
-      { kind: 'color', name: '--color-text-strong', label: '본문 텍스트' },
-      { kind: 'color', name: '--color-primary', label: 'Primary 액센트' },
-      { kind: 'color', name: '--color-sage', label: '보상 · 성공' },
-      { kind: 'color', name: '--color-live', label: '라이브 배지' },
-      { kind: 'color', name: '--color-warn', label: '이벤트 · 알림' },
-    ],
-  },
-  {
-    title: '디자인시스템',
-    axis: 'S',
-    fields: [
-      { kind: 'range', name: '--radius-sm', label: '작은 radius', min: 0, max: 16, step: 1, unit: 'px' },
-      { kind: 'range', name: '--radius-md', label: '기본 radius', min: 0, max: 24, step: 1, unit: 'px' },
-      { kind: 'range', name: '--radius-lg', label: '카드 radius', min: 0, max: 32, step: 1, unit: 'px' },
-      { kind: 'range', name: '--radius-xl', label: '벤토 radius', min: 0, max: 48, step: 2, unit: 'px' },
-    ],
-  },
-  {
-    title: '가독성',
-    axis: 'R',
-    fields: [
-      { kind: 'range', name: '--fs-body', label: '본문 크기', min: 12, max: 20, step: 1, unit: 'px' },
-      { kind: 'range', name: '--fs-h1', label: 'H1 크기', min: 24, max: 56, step: 1, unit: 'px' },
-      { kind: 'range', name: '--fs-hero', label: '히어로 크기', min: 32, max: 80, step: 2, unit: 'px' },
-      { kind: 'range', name: '--lh-body', label: '본문 행간', min: 1.2, max: 2, step: 0.05, unit: '' },
-    ],
-  },
-];
-
 /**
- * 콘텐츠(L3) 치수 슬롯 — 레이아웃의 "파라미터" 층.
- * 구조(벤토 ↔ 분할 ↔ 스택)는 마크업이라 여기서 바꿀 수 없다.
+ * 탭·그룹·필드 정의는 token-fields.json 이 SSOT 다.
+ * JSON 은 넓은 타입으로 들어오므로 여기서 한 번만 Tab[] 로 좁힌다.
  */
-const CONTENT_GROUPS: Group[] = [
-  {
-    title: '히어로',
-    axis: 'L',
-    fields: [
-      {
-        kind: 'select', name: '--hero-aspect', label: '비율',
-        options: [
-          { value: '21/9', label: '21:9 · 시네마틱' },
-          { value: '2/1', label: '2:1' },
-          { value: '16/9', label: '16:9 · 표준' },
-          { value: '3/2', label: '3:2' },
-          { value: '4/3', label: '4:3 · 세로 여유' },
-        ],
-      },
-      { kind: 'range', name: '--hero-min-h', label: '최소 높이', min: 240, max: 640, step: 10, unit: 'px' },
-      { kind: 'range', name: '--hero-max-h', label: '최대 높이', min: 400, max: 900, step: 10, unit: 'px' },
-    ],
-  },
-  {
-    title: '그리드',
-    axis: 'L',
-    fields: [
-      { kind: 'range', name: '--grid-columns', label: '벤토 컬럼 수', min: 3, max: 8, step: 1, unit: '' },
-      { kind: 'range', name: '--grid-row-h', label: '벤토 행 높이', min: 80, max: 200, step: 4, unit: 'px' },
-      { kind: 'range', name: '--card-grid-cols', label: '카드 그리드 열 수', min: 1, max: 4, step: 1, unit: '' },
-    ],
-  },
-  {
-    title: '미디어 · 내비',
-    axis: 'L',
-    fields: [
-      {
-        kind: 'select', name: '--media-aspect', label: '썸네일 비율',
-        options: [
-          { value: '16/9', label: '16:9 · 표준' },
-          { value: '3/2', label: '3:2' },
-          { value: '4/3', label: '4:3' },
-          { value: '1/1', label: '1:1 · 정사각' },
-        ],
-      },
-      { kind: 'range', name: '--layout-sidebar-w', label: 'LNB 폭', min: 160, max: 320, step: 4, unit: 'px' },
-      { kind: 'range', name: '--layout-gnb-h', label: 'GNB 높이', min: 44, max: 96, step: 2, unit: 'px' },
-    ],
-  },
-];
+const TABS = (tokenFields.tabs as unknown) as Tab[];
 
-const TABS: Tab[] = [
-  {
-    id: 'global', label: '전역', groups: GLOBAL_GROUPS,
-    hint: '색·모양·타이포 — 화면 전체에 적용됩니다.',
-  },
-  {
-    id: 'content', label: '콘텐츠', groups: CONTENT_GROUPS,
-    hint: '레이아웃 치수 — 구조(벤토 ↔ 분할 ↔ 스택)는 마크업이라 여기서 바꿀 수 없습니다.',
-  },
-];
-
-const ALL_FIELDS = TABS.flatMap((t) => t.groups.flatMap((g) => g.fields));
+const ALL_FIELDS: Field[] = TABS.flatMap((t) => t.groups.flatMap((g) => g.fields));
 
 /** 현재 적용된 계산값을 읽는다 (인라인 오버라이드가 있으면 그 값). */
 function readComputed(name: string): string {
@@ -194,7 +105,8 @@ export function ThemeTuner() {
     try {
       const r = await fetch(`${BRIDGE_URL}/health`, { cache: 'no-store' });
       const j = await r.json();
-      setBridge(j.ok && j.ver >= 2 ? 'ready' : 'down');
+      // VER 3 부터 확정 기록(state.json · direction.md)을 수행한다 — 그 이하는 저장 경로로 쓰지 않는다
+      setBridge(j.ok && j.ver >= 3 ? 'ready' : 'down');
     } catch {
       setBridge('down');
     }

@@ -1,0 +1,113 @@
+{
+  "_readme": [
+    "조정 패널 필드 정의의 단일 소스(SSOT).",
+    "",
+    "이 파일 하나만 고치면 두 패널이 함께 바뀐다:",
+    "  · 디자인시스템 조정기  frontend/src/pages/ThemeTuner.tsx  (import)",
+    "  · 시안 콘텐츠 조정     design/composition-preview.html    (인라인 — 아래 주의)",
+    "",
+    "시안은 file:// 로 열려 import 를 쓸 수 없어 이 JSON 을 HTML 안에 인라인한다.",
+    "인라인 블록은 생성물이므로 손으로 고치지 말고 아래 명령으로 재생성한다:",
+    "  node scripts/sync-token-fields.js",
+    "",
+    "값이 아니라 '무엇을 조정할 수 있는가'만 담는다 — 값의 SSOT 는 tokens.css 다.",
+    "여기 적은 name 은 반드시 tokens.css 에 실재하는 슬롯이어야 한다(브리지가 없는 변수는 무시한다)."
+  ],
+  "tabs": [
+    {
+      "id": "global",
+      "label": "전역",
+      "hint": "색·모양·타이포 — 화면 전체에 적용됩니다.",
+      "groups": [
+        {
+          "title": "톤앤매너",
+          "axis": "T",
+          "fields": [
+            { "kind": "color", "name": "--color-bg", "label": "페이지 배경" },
+            { "kind": "color", "name": "--color-surface", "label": "카드 표면" },
+            { "kind": "color", "name": "--color-text-strong", "label": "본문 텍스트" },
+            { "kind": "color", "name": "--color-primary", "label": "Primary 액센트" },
+            { "kind": "color", "name": "--color-sage", "label": "보상 · 성공" },
+            { "kind": "color", "name": "--color-live", "label": "라이브 배지" },
+            { "kind": "color", "name": "--color-warn", "label": "이벤트 · 알림" }
+          ]
+        },
+        {
+          "title": "디자인시스템",
+          "axis": "S",
+          "fields": [
+            { "kind": "range", "name": "--radius-sm", "label": "작은 radius", "min": 0, "max": 16, "step": 1, "unit": "px" },
+            { "kind": "range", "name": "--radius-md", "label": "기본 radius", "min": 0, "max": 24, "step": 1, "unit": "px" },
+            { "kind": "range", "name": "--radius-lg", "label": "카드 radius", "min": 0, "max": 32, "step": 1, "unit": "px" },
+            { "kind": "range", "name": "--radius-xl", "label": "벤토 radius", "min": 0, "max": 48, "step": 2, "unit": "px" }
+          ]
+        },
+        {
+          "title": "가독성",
+          "axis": "R",
+          "fields": [
+            { "kind": "range", "name": "--fs-body", "label": "본문 크기", "min": 12, "max": 20, "step": 1, "unit": "px" },
+            { "kind": "range", "name": "--fs-h1", "label": "H1 크기", "min": 24, "max": 56, "step": 1, "unit": "px" },
+            { "kind": "range", "name": "--fs-hero", "label": "히어로 크기", "min": 32, "max": 80, "step": 2, "unit": "px" },
+            { "kind": "range", "name": "--lh-body", "label": "본문 행간", "min": 1.2, "max": 2, "step": 0.05, "unit": "" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "label": "콘텐츠",
+      "hint": "레이아웃 치수 — 구조(벤토 ↔ 분할 ↔ 스택)는 마크업이라 여기서 바꿀 수 없습니다.",
+      "groups": [
+        {
+          "title": "히어로",
+          "axis": "L",
+          "fields": [
+            {
+              "kind": "select",
+              "name": "--hero-aspect",
+              "label": "비율",
+              "options": [
+                { "value": "21/9", "label": "21:9 · 시네마틱" },
+                { "value": "2/1", "label": "2:1" },
+                { "value": "16/9", "label": "16:9 · 표준" },
+                { "value": "3/2", "label": "3:2" },
+                { "value": "4/3", "label": "4:3 · 세로 여유" }
+              ]
+            },
+            { "kind": "range", "name": "--hero-min-h", "label": "최소 높이", "min": 240, "max": 640, "step": 10, "unit": "px" },
+            { "kind": "range", "name": "--hero-max-h", "label": "최대 높이", "min": 400, "max": 900, "step": 10, "unit": "px" }
+          ]
+        },
+        {
+          "title": "그리드",
+          "axis": "L",
+          "fields": [
+            { "kind": "range", "name": "--grid-columns", "label": "벤토 컬럼 수", "min": 3, "max": 8, "step": 1, "unit": "" },
+            { "kind": "range", "name": "--grid-row-h", "label": "벤토 행 높이", "min": 80, "max": 200, "step": 4, "unit": "px" },
+            { "kind": "range", "name": "--card-grid-cols", "label": "카드 그리드 열 수", "min": 1, "max": 4, "step": 1, "unit": "" }
+          ]
+        },
+        {
+          "title": "미디어 · 내비",
+          "axis": "L",
+          "fields": [
+            {
+              "kind": "select",
+              "name": "--media-aspect",
+              "label": "썸네일 비율",
+              "options": [
+                { "value": "16/9", "label": "16:9 · 표준" },
+                { "value": "3/2", "label": "3:2" },
+                { "value": "4/3", "label": "4:3" },
+                { "value": "1/1", "label": "1:1 · 정사각" }
+              ]
+            },
+            { "kind": "range", "name": "--layout-sidebar-w", "label": "LNB 폭", "min": 160, "max": 320, "step": 4, "unit": "px" },
+            { "kind": "range", "name": "--layout-gnb-h", "label": "GNB 높이", "min": 44, "max": 96, "step": 2, "unit": "px" }
+          ]
+        }
+      ]
+    }
+  ]
+}
